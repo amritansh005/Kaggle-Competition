@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Education Desktop App</title>
+  <!-- Materialize CSS for Material Design -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=1100, initial-scale=1.0">
+  <!-- Elegant Google Font for headings -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #f5f6fa;
+    }
+    .test-history-item {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 8px rgba(44,62,80,0.07);
+      transition: box-shadow 0.2s, border-color 0.2s;
+      cursor: pointer;
+      font-size: 1.08rem;
+    }
+    .test-history-item:hover {
+      border-color: #1976d2;
+      box-shadow: 0 4px 16px rgba(25, 118, 210, 0.10);
+      background: #f0f7ff;
+    }
+    .brand-logo {
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .side-nav-fixed {
+      height: 100vh;
+      background: linear-gradient(135deg, #263238 80%, #37474f 100%);
+      color: #fff;
+      padding-top: 2rem;
+      box-shadow: 2px 0 18px 0 rgba(44,62,80,0.10);
+      border-top-right-radius: 18px;
+      border-bottom-right-radius: 18px;
+      min-width: 240px;
+      font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+      transition: box-shadow 0.2s;
+    }
+    .side-nav-fixed .elegant-tab {
+      font-size: 1.13rem;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      border-radius: 10px;
+      margin-bottom: 0.5rem;
+      transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+      position: relative;
+      z-index: 1;
+    }
+    .side-nav-fixed .elegant-tab:hover, .side-nav-fixed .elegant-tab:focus {
+      background: #2e3c43;
+      color: #90caf9;
+      box-shadow: 0 2px 8px rgba(25, 118, 210, 0.10);
+      cursor: pointer;
+    }
+    .side-nav-fixed .active {
+      background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(25, 118, 210, 0.13);
+      border-radius: 10px;
+      font-weight: 700;
+      position: relative;
+      z-index: 2;
+    }
+    .main-content {
+      margin-left: 260px;
+      padding: 2rem 3rem;
+    }
+    .input-field {
+      display: flex;
+      flex-direction: column;
+    }
+    .card {
+      border-radius: 18px;
+      box-shadow: 0 8px 32px rgba(44,62,80,0.13);
+      border: 1.5px solid #e3e7ef;
+      background: linear-gradient(135deg, #fafdff 80%, #e3f0ff 100%);
+      padding: 2.5rem 2.5rem 2rem 2.5rem !important;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .mcq-options label {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    .mcq-question {
+      font-weight: 600;
+      font-size: 1.15rem;
+      margin-bottom: 0.5rem;
+    }
+    .feature-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      color: #1a237e;
+      letter-spacing: 0.5px;
+      font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+      text-shadow: 0 2px 8px rgba(44,62,80,0.04);
+    }
+    .btn {
+      border-radius: 10px;
+      font-size: 1.08rem;
+      font-weight: 600;
+      padding: 0.95rem 2.2rem 0.95rem 2.2rem;
+      line-height: 1.3;
+      box-shadow: 0 2px 8px rgba(25, 118, 210, 0.10);
+      background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
+      transition: box-shadow 0.18s, background 0.18s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn:hover, .btn:focus {
+      box-shadow: 0 4px 16px rgba(25, 118, 210, 0.18);
+      background: linear-gradient(90deg, #1565c0 60%, #64b5f6 100%);
+    }
+    .score-result {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #388e3c;
+      margin-top: 1.5rem;
+    }
+    /* Custom subject checkbox styling */
+    .subject-list label {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-size: 1.13rem;
+      font-weight: 500;
+      color: #1976d2;
+      background: #f4f8ff;
+      border-radius: 7px;
+      padding: 0.45rem 1rem 0.45rem 0.7rem;
+      margin-bottom: 0.4rem;
+      box-shadow: 0 1px 4px rgba(25, 118, 210, 0.04);
+      transition: background 0.18s, box-shadow 0.18s;
+      cursor: pointer;
+    }
+    .subject-list label:hover {
+      background: #e3f0ff;
+      box-shadow: 0 2px 8px rgba(25, 118, 210, 0.10);
+    }
+    .subject-list input[type="checkbox"]:checked + span {
+      color: #0d47a1;
+      font-weight: 600;
+    }
+    .subject-list input[type="checkbox"] {
+      accent-color: #1976d2;
+      width: 1.1em;
+      height: 1.1em;
+      margin-right: 0.5em;
+    }
+    /* Section separation */
+    .mcq-form-section {
+      margin-bottom: 2rem;
+      padding-bottom: 1.2rem;
+      border-bottom: 1px solid #e3e7ef;
+    }
+    .mcq-form-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    /* Main content background */
+    .main-content {
+      margin-left: 260px;
+      padding: 2.5rem 3.5rem;
+      min-height: 100vh;
+      background: linear-gradient(120deg, #f5f6fa 80%, #e3f0ff 100%);
+    }
+
+    /* Elegant Headings */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #1a237e;
+      text-shadow: 0 2px 8px rgba(44,62,80,0.06);
+      margin-top: 1.5em;
+      margin-bottom: 0.7em;
+      line-height: 1.18;
+    }
+    h1 {
+      font-size: 2.7rem;
+      border-bottom: 2px solid #90caf9;
+      padding-bottom: 0.2em;
+      margin-bottom: 1em;
+    }
+    h2 {
+      font-size: 2.1rem;
+      border-bottom: 1.5px solid #bbdefb;
+      padding-bottom: 0.15em;
+      margin-bottom: 0.8em;
+    }
+    h3 {
+      font-size: 1.5rem;
+      color: #1976d2;
+    }
+    h4, h5, h6 {
+      font-size: 1.18rem;
+      color: #3949ab;
+      font-weight: 600;
+      margin-top: 1.2em;
+      margin-bottom: 0.5em;
+    }
+
+    /* Elegant subheadings for bold text in explanations */
+    .main-content b {
+      display: block;
+      font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+      font-size: 1.13rem;
+      color: #1976d2;
+      font-weight: 600;
+      margin-top: 1.1em;
+      margin-bottom: 0.4em;
+      letter-spacing: 0.2px;
+      text-shadow: 0 1px 4px rgba(44,62,80,0.04);
+    }
+    /* Elegant section headings for Answer/Explanation */
+    .math-section-heading {
+      font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+      font-size: 1.25rem;
+      color: #1976d2;
+      font-weight: 700;
+      margin-top: 1.5em;
+      margin-bottom: 0.5em;
+      letter-spacing: 0.3px;
+      text-shadow: 0 1px 4px rgba(44,62,80,0.04);
+      display: block;
+    }
+    .math-answer-block {
+      font-size: 1.35rem;
+      color: #222;
+      background: #fafdff;
+      border-radius: 8px;
+      padding: 0.6em 1em;
+      margin-bottom: 1.2em;
+      margin-top: 0.2em;
+      font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+      box-shadow: 0 2px 8px rgba(44,62,80,0.04);
+      display: inline-block;
+      min-width: 120px;
+      word-break: break-word;
+    }
+    @media (max-width: 900px) {
+      .main-content {
+        margin-left: 0;
+        padding: 1rem;
+      }
+      .side-nav-fixed {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <ul class="side-nav-fixed" style="width: 240px; position: fixed;">
+    <li style="padding: 0 1.5rem 1.5rem 1.5rem;">
+      <span class="brand-logo" style="font-size: 1.7rem;">EduSuite</span>
+    </li>
+    <li class="active elegant-tab" id="tab-mcq" style="padding: 0.5rem 1.5rem; cursor:pointer;">
+      Exam Generator
+    </li>
+    <li class="elegant-tab" id="tab-numerical" style="padding: 0.5rem 1.5rem; cursor:pointer;">
+      Numerical Solver
+    </li>
+    <li class="elegant-tab" id="tab-history" style="padding: 0.5rem 1.5rem; cursor:pointer;">
+      Previous Tests
+    </li>
+    <li class="elegant-tab" id="tab-compiler" style="padding: 0.5rem 1.5rem; cursor:pointer;">
+      Chapter-to-Micro-Lesson
+    </li>
+    <li style="padding: 0.5rem 1.5rem; color: #90a4ae;">
+      <i class="material-icons left">more_horiz</i> More features coming soon
+    </li>
+  </ul>
+  <div class="main-content">
+    <div id="mcq-section">
+      <div class="feature-title">MCQ Exam Generator</div>
+      <div class="card" style="padding: 2rem;">
+      <form id="examForm">
+        <div class="row">
+          <div class="input-field col s12 m4">
+            <p style="margin-bottom: 0.7rem;"><b>Subjects</b></p>
+            <div class="subject-list" style="display: flex; flex-direction: column; gap: 0.5rem;">
+              <label>
+                <input type="checkbox" name="subject" value="physics" checked/>
+                <span>Physics</span>
+              </label>
+              <label>
+                <input type="checkbox" name="subject" value="chemistry" checked/>
+                <span>Chemistry</span>
+              </label>
+              <label>
+                <input type="checkbox" name="subject" value="biology" checked/>
+                <span>Biology</span>
+              </label>
+            </div>
+          </div>
+          <div class="input-field col s12 m4 mcq-form-section">
+            <b>Grade</b>
+            <select id="grade" class="browser-default" style="margin-bottom: 1.2rem;">
+              <option value="random">Random</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+            </select>
+            <b>Difficulty</b>
+            <select id="difficulty" class="browser-default">
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+<!-- Topics input removed -->
+          </div>
+        </div>
+        <button type="submit" class="btn waves-effect waves-light blue darken-2" style="margin-top: 1rem;">Generate Exam</button>
+      </form>
+      <div id="mcqSection" style="display:none; margin-top:2rem;">
+        <h5>MCQs</h5>
+        <form id="mcqForm"></form>
+        <button id="submitAnswers" class="btn green darken-2" style="display:none; margin-top:1rem;">Submit Answers</button>
+        <div id="scoreResult" class="score-result"></div>
+      </div>
+    </div>
+    <div id="history-section" style="display:none;">
+      <div class="feature-title">Previous Tests</div>
+      <div class="card" style="padding: 2rem;">
+        <div id="previous-tests-list"></div>
+        <div id="test-details" style="margin-top:1em;">
+          <canvas id="performance-graph" width="400" height="200" style="display:none;"></canvas>
+        </div>
+      </div>
+    </div>
+    <div id="numerical-section" style="display:none;">
+      <div class="feature-title">Numerical Solver</div>
+      <div class="card" style="padding: 2rem; background: #e3ecff;">
+        <form id="numericalForm">
+          <div class="input-field">
+            <label for="numericalInput" style="font-weight:600; margin-bottom:0.5rem;">Enter your math question or expression:</label>
+            <input id="numericalInput" type="text" placeholder="e.g. Integrate x^2 from 0 to 1" required style="margin-bottom:1rem;"/>
+          </div>
+          <button type="submit" class="btn blue darken-2" style="margin-bottom:1.5rem;">Solve</button>
+        </form>
+        <div id="numericalResult" style="margin-top:1.5rem;"></div>
+        <div id="numericalExplanation" style="margin-top:1.5rem;"></div>
+        <div id="numericalVisualization" style="margin-top:1.5rem;"></div>
+      </div>
+    </div>
+    <div id="compiler-section" style="display:none;">
+      <div class="feature-title">Chapter-to-Micro-Lesson Compiler</div>
+      <div class="card" style="padding: 2rem; background: #fffbe7;">
+        <form id="compilerForm">
+<div style="font-weight:600; margin-bottom:1.2rem; margin-top:0.2rem; font-size:1.08rem;">
+  Drop a PDF or paste textbook chapter text:
+</div>
+<div class="input-field">
+  <input id="compilerFile" type="file" accept=".pdf,.txt" style="margin-bottom:1rem;"/>
+  <textarea id="compilerText" placeholder="Or paste chapter text here..." style="margin-bottom:1rem; min-height:120px;"></textarea>
+</div>
+          <button type="submit" class="btn orange darken-2" style="margin-bottom:1.5rem;">Compile Micro-Lessons</button>
+        </form>
+        <div id="compilerResult" style="margin-top:2rem;"></div>
+      </div>
+    </div>
+  </div>
+  <!-- Chart.js CDN for graphs -->
+  <!-- MathJax for beautiful math rendering -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>
+    const backendUrl = "http://127.0.0.1:8000";
+    let examId = null;
+    let mcqs = [];
+
+    // Topic input and suggestion logic removed
+
+    document.getElementById('examForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const selectedSubjects = Array.from(document.querySelectorAll('input[name="subject"]:checked')).map(cb => cb.value);
+      if (selectedSubjects.length === 0) {
+        M.toast({html: "Select at least one subject.", classes: "red"});
+        return;
+      }
+      const grade = document.getElementById('grade').value;
+      const difficulty = document.getElementById('difficulty').value;
+      // Always use "localuser" for single-user offline mode
+      const user_id = "localuser";
+      const subjects = selectedSubjects.map(subj => ({
+        subject: subj,
+        grade: grade,
+        difficulty: difficulty
+      }));
+      // Call /generate_exam
+      const res = await fetch(backendUrl + "/generate_exam", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subjects: subjects,
+          language: "en",
+          user_id: user_id
+        })
+      });
+      if (!res.ok) {
+        const errorText = await res.text();
+        M.toast({html: "Failed to generate exam: " + errorText, classes: "red"});
+        console.error("Generate Exam Error:", errorText);
+        return;
+      }
+      const data = await res.json();
+      examId = data.exam_id;
+      // Call /generate_mcqs with questions array
+      const mcqRes = await fetch(backendUrl + "/generate_mcqs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ questions: data.questions })
+      });
+      if (!mcqRes.ok) {
+        const mcqErrorText = await mcqRes.text();
+        M.toast({html: "Failed to generate MCQs: " + mcqErrorText, classes: "red"});
+        console.error("Generate MCQs Error:", mcqErrorText);
+        return;
+      }
+      const mcqData = await mcqRes.json();
+      mcqs = mcqData.mcqs;
+      showMcqs();
+    };
+
+    function showMcqs() {
+      const mcqSection = document.getElementById('mcqSection');
+      const mcqForm = document.getElementById('mcqForm');
+      mcqForm.innerHTML = "";
+      mcqs.forEach((mcq, idx) => {
+        // Use backend question ID if available, else fallback to idx
+        // Also, store the qid on the block for debugging
+        const qid = String(
+          mcq.id ||
+          mcq.question_id ||
+          mcq.QID ||
+          mcq.qid ||
+          mcq.index ||
+          mcq.Qid ||
+          idx
+        );
+        const block = document.createElement('div');
+        block.className = "question-block";
+        block.setAttribute("data-qid", qid);
+        block.innerHTML = `<div class="mcq-question">Q${idx+1}: ${mcq.question}</div><div class="mcq-options"></div>`;
+        const optionsDiv = block.querySelector('.mcq-options');
+        mcq.options.forEach((opt, optIdx) => {
+          const optId = `q${qid}_opt${optIdx}`;
+          optionsDiv.innerHTML += `
+            <label>
+              <input type="radio" name="q${qid}" value="${opt}" required/>
+<span>${opt}</span>
+            </label>
+          `;
+        });
+        mcqForm.appendChild(block);
+      });
+      mcqSection.style.display = "";
+      document.getElementById('submitAnswers').style.display = "";
+      document.getElementById('scoreResult').innerText = "";
+    }
+
+    document.getElementById('submitAnswers').onclick = async function(e) {
+      e.preventDefault();
+      const answers = {};
+      let allAnswered = true;
+      mcqs.forEach((mcq, idx) => {
+        // Use the same qid logic as in showMcqs
+        const qid = String(
+          mcq.id ||
+          mcq.question_id ||
+          mcq.QID ||
+          mcq.qid ||
+          mcq.index ||
+          mcq.Qid ||
+          idx
+        );
+        const selected = document.querySelector(`input[name="q${qid}"]:checked`);
+        if (selected) {
+          answers[qid] = selected.value;
+        } else {
+          allAnswered = false;
+        }
+      });
+      if (!allAnswered) {
+        M.toast({html: "Please answer all questions.", classes: "red"});
+        return;
+      }
+      // Calculate score (frontend, for instant feedback)
+      let correct = 0;
+      mcqs.forEach((mcq, idx) => {
+        const qid = String(
+          mcq.id ||
+          mcq.question_id ||
+          mcq.QID ||
+          mcq.qid ||
+          mcq.index ||
+          mcq.Qid ||
+          idx
+        );
+        const userAns = answers[qid];
+        const correctAns = mcq.options[mcq.answer_index];
+        if (userAns && userAns.trim().toLowerCase() === correctAns.trim().toLowerCase()) correct++;
+      });
+      const score = `${correct} / ${mcqs.length}`;
+      document.getElementById('scoreResult').innerText = "Your Score: " + score;
+
+      // --- Submit answers to backend for saving ---
+      if (!examId) {
+        M.toast({html: "Exam ID missing. Please regenerate the exam.", classes: "red"});
+        return;
+      }
+      try {
+        const res = await fetch(backendUrl + "/submit_answers", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: "localuser",
+            exam_id: examId,
+            answers: answers,
+            questions: mcqs // send MCQ-enriched questions for backend scoring/review
+          })
+        });
+        if (!res.ok) {
+          const errorText = await res.text();
+          M.toast({html: "Failed to save your test: " + errorText, classes: "red"});
+        }
+      } catch (err) {
+        M.toast({html: "Error saving your test.", classes: "red"});
+      }
+    };
+    // --- Tab switching logic ---
+    const tabMcq = document.getElementById("tab-mcq");
+    const tabNumerical = document.getElementById("tab-numerical");
+    const tabHistory = document.getElementById("tab-history");
+    const tabCompiler = document.getElementById("tab-compiler");
+    const mcqSection = document.getElementById("mcq-section");
+    const numericalSection = document.getElementById("numerical-section");
+    const historySection = document.getElementById("history-section");
+    const compilerSection = document.getElementById("compiler-section");
+
+    function setActiveTab(tab) {
+      document.querySelectorAll(".side-nav-fixed li").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+    }
+
+    tabMcq.addEventListener("click", () => {
+      setActiveTab(tabMcq);
+      mcqSection.style.display = "";
+      numericalSection.style.display = "none";
+      historySection.style.display = "none";
+      compilerSection.style.display = "none";
+    });
+
+    tabNumerical.addEventListener("click", () => {
+      setActiveTab(tabNumerical);
+      mcqSection.style.display = "none";
+      numericalSection.style.display = "";
+      historySection.style.display = "none";
+      compilerSection.style.display = "none";
+    });
+
+    tabHistory.addEventListener("click", () => {
+      setActiveTab(tabHistory);
+      mcqSection.style.display = "none";
+      numericalSection.style.display = "none";
+      historySection.style.display = "";
+      compilerSection.style.display = "none";
+      fetchPreviousTests();
+    });
+
+    tabCompiler.addEventListener("click", () => {
+      setActiveTab(tabCompiler);
+      mcqSection.style.display = "none";
+      numericalSection.style.display = "none";
+      historySection.style.display = "none";
+      compilerSection.style.display = "";
+    });
+
+    // --- Previous Tests logic ---
+    async function fetchPreviousTests() {
+      const listDiv = document.getElementById("previous-tests-list");
+      listDiv.innerHTML = "Loading...";
+      try {
+        const res = await fetch(`${backendUrl}/user_submissions/localuser`);
+        if (!res.ok) {
+          listDiv.innerHTML = "Failed to load previous tests.";
+          return;
+        }
+        const submissions = await res.json();
+        if (submissions.length === 0) {
+          listDiv.innerHTML = "No previous tests found.";
+          return;
+        }
+        // Render list
+        listDiv.innerHTML = "";
+        submissions.forEach((sub, idx) => {
+          const div = document.createElement("div");
+          div.className = "test-history-item";
+          div.textContent = `Test ${idx + 1}: ${sub.submitted_at} | Score: ${sub.correct}/${sub.total} | Subjects: ${getSubjectsString(sub.filters)}`;
+          div.onclick = () => fetchTestDetails(sub.filename);
+          listDiv.appendChild(div);
+        });
+      } catch (err) {
+        listDiv.innerHTML = "Error loading previous tests.";
+      }
+    }
+
+    function getSubjectsString(filters) {
+      if (!filters) return "";
+      if (Array.isArray(filters)) {
+        return filters.map(f => `${f.subject} (G${f.grade}, ${f.difficulty})`).join(", ");
+      }
+      // fallback for old format
+      return Object.values(filters).join(", ");
+    }
+
+    async function fetchTestDetails(filename) {
+      const detailsDiv = document.getElementById("test-details");
+      detailsDiv.innerHTML = "Loading test details...";
+      try {
+        const res = await fetch(`${backendUrl}/submission/${filename}`);
+        if (!res.ok) {
+          detailsDiv.innerHTML = "Failed to load test details.";
+          return;
+        }
+        const data = await res.json();
+        renderTestDetails(data, detailsDiv);
+      } catch (err) {
+        detailsDiv.innerHTML = "Error loading test details.";
+      }
+    }
+
+    function renderTestDetails(data, container) {
+      let html = `<h5>Test Details</h5>`;
+      html += `<b>Date:</b> ${data.submitted_at || ""}<br>`;
+      html += `<b>Score:</b> ${data.correct} / ${data.total} (${((data.score || 0) * 100).toFixed(1)}%)<br>`;
+      html += `<b>Subjects:</b> ${getSubjectsString(data.filters)}<br>`;
+      html += `<hr>`;
+      html += `<b>Questions & Answers:</b><br>`;
+      if (Array.isArray(data.questions_with_answers)) {
+        html += "<ol>";
+        data.questions_with_answers.forEach((qwa, idx) => {
+          html += `<li><b>${qwa.question || "Question"}</b><br>`;
+          html += `Your answer: <span style="color:${qwa.user_answer && qwa.user_answer.trim().toLowerCase() === qwa.correct_answer.trim().toLowerCase() ? 'green' : 'red'}">${qwa.user_answer || "(no answer)"}</span><br>`;
+          html += `Correct answer: <b>${qwa.correct_answer || ""}</b><br>`;
+          html += `<i>Subject: ${qwa.subject || ""}, Topic: ${qwa.topic || ""}, Difficulty: ${qwa.difficulty || ""}</i>`;
+          html += `</li>`;
+        });
+        html += "</ol>";
+      }
+      container.innerHTML = html;
+
+      // --- Performance Graphs ---
+      const perfGraph = document.getElementById("performance-graph");
+      if (!perfGraph) return;
+      // Compute subject-wise and topic-wise performance
+      // (Optional: you can use qwa.subject, qwa.user_answer, qwa.correct_answer for analytics)
+      // For now, hide the graph if not needed
+      perfGraph.style.display = "none";
+    }
+
+    function computePerformance(questions, answers) {
+      // Returns { subjects: {labels, correct, incorrect}, topics: {labels, correct, incorrect} }
+      const subjStats = {};
+      const topicStats = {};
+      questions.forEach((q, idx) => {
+        const qid = String(q.id || q.question_id || q.QID || q.qid || q.index || idx);
+        const userAns = answers && answers[qid] !== undefined ? answers[qid] : null;
+        const correctAns = q.answer || q.Answer || q.correct_answer || "";
+        const isCorrect = userAns !== null && String(userAns).trim().toLowerCase() === String(correctAns).trim().toLowerCase();
+        // Subject
+        const subj = q.subject || "Unknown";
+        if (!subjStats[subj]) subjStats[subj] = { correct: 0, incorrect: 0 };
+        if (isCorrect) subjStats[subj].correct += 1;
+        else subjStats[subj].incorrect += 1;
+        // Topic
+        const topic = q.topic || "Unknown";
+        if (!topicStats[topic]) topicStats[topic] = { correct: 0, incorrect: 0 };
+        if (isCorrect) topicStats[topic].correct += 1;
+        else topicStats[topic].incorrect += 1;
+      });
+      return {
+        subjects: {
+          labels: Object.keys(subjStats),
+          correct: Object.values(subjStats).map(s => s.correct),
+          incorrect: Object.values(subjStats).map(s => s.incorrect)
+        },
+        topics: {
+          labels: Object.keys(topicStats),
+          correct: Object.values(topicStats).map(s => s.correct),
+          incorrect: Object.values(topicStats).map(s => s.incorrect)
+        }
+      };
+    }
+
+    let chartInstance = null;
+    function renderBarChart(canvas, labels, correctData, incorrectData, title) {
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+      chartInstance = new Chart(canvas, {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: "Correct",
+              data: correctData,
+              backgroundColor: "rgba(75, 192, 192, 0.7)"
+            },
+            {
+              label: "Incorrect",
+              data: incorrectData,
+              backgroundColor: "rgba(255, 99, 132, 0.7)"
+            }
+          ]
+        },
+        options: {
+          responsive: false,
+          plugins: {
+            title: {
+              display: true,
+              text: title
+            }
+          },
+          scales: {
+            x: { stacked: true },
+            y: { beginAtZero: true, stacked: true }
+          }
+        }
+      });
+    }
+    // --- Numerical Solver logic ---
+    document.getElementById('numericalForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const input = document.getElementById('numericalInput').value.trim();
+      if (!input) {
+        M.toast({html: "Please enter a question or expression.", classes: "red"});
+        return;
+      }
+      document.getElementById('numericalResult').innerHTML = "Solving...";
+      document.getElementById('numericalExplanation').innerHTML = "";
+      document.getElementById('numericalVisualization').innerHTML = "";
+      try {
+        const res = await fetch(backendUrl + "/solve_numerical", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query: input })
+        });
+        if (!res.ok) {
+          const errorText = await res.text();
+          document.getElementById('numericalResult').innerHTML = "Error: " + errorText;
+          return;
+        }
+        const data = await res.json();
+        // Show computation results (render answer and details)
+        let resultHtml = "";
+        // Try to extract answer from common fields
+        let answer = "";
+        if (data.results && data.results.computation && data.results.computation.results && Array.isArray(data.results.computation.results)) {
+          const firstResult = data.results.computation.results[0];
+          if (firstResult && firstResult.symbolic_result) {
+            answer = firstResult.symbolic_result;
+            resultHtml += "<span class='math-section-heading'>Answer:</span>";
+            resultHtml += "<div class='math-answer-block'>" + answer + "</div>";
+          }
+        }
+        document.getElementById('numericalResult').innerHTML = resultHtml;
+
+        // Show explanation
+        if (data.explanation) {
+          document.getElementById('numericalExplanation').innerHTML =
+            "<span class='math-section-heading'>Explanation:</span><div style='margin-top:0.5em;'>" + data.explanation + "</div>";
+        } else {
+          document.getElementById('numericalExplanation').innerHTML = "";
+        }
+
+        // Show visualization (Plotly)
+        const vizDiv = document.getElementById('numericalVisualization');
+        vizDiv.innerHTML = "";
+        let rendered = false;
+        if (data.visualizations && Array.isArray(data.visualizations) && data.visualizations.length > 0) {
+          // DEBUG: Log the type and content of the first visualization received
+          try {
+            console.log("DEBUG: First visualization type:", typeof data.visualizations[0], "content:", data.visualizations[0]);
+          } catch (e) {}
+          // Try to render each Plotly figure
+          data.visualizations.forEach((fig, idx) => {
+            // DEBUG: Log the type and content of each visualization
+            try {
+              console.log("Visualization idx", idx, "type:", typeof fig, "content:", fig);
+            } catch (e) {}
+            // If fig is a string, try to parse as JSON
+            if (typeof fig === "string") {
+              try {
+                fig = JSON.parse(fig);
+              } catch (e) {
+                console.error("Failed to parse visualization JSON:", e, fig);
+                // If not valid JSON, skip rendering
+                return;
+              }
+            }
+            // Only render if fig has 'data' and 'layout'
+            if (fig && fig.data && fig.layout) {
+              const plotDiv = document.createElement('div');
+              plotDiv.id = "plotly-figure-" + idx;
+              plotDiv.style.width = "100%";
+              plotDiv.style.maxWidth = "700px";
+              plotDiv.style.height = "400px";
+              plotDiv.style.marginBottom = "2em";
+              vizDiv.appendChild(plotDiv);
+              // Render with Plotly
+              Plotly.newPlot(plotDiv.id, fig.data, fig.layout, {responsive: true});
+              rendered = true;
+            } else {
+              console.warn("Visualization missing data/layout:", fig);
+            }
+          });
+        }
+        // If no valid visualizations, check for text annotations and display them
+        if (!rendered) {
+          let annotationText = null;
+          if (data.visualizations && Array.isArray(data.visualizations) && data.visualizations.length > 0) {
+            for (const fig of data.visualizations) {
+              let parsedFig = fig;
+              if (typeof parsedFig === "string") {
+                try {
+                  parsedFig = JSON.parse(parsedFig);
+                } catch (e) {}
+              }
+              if (
+                parsedFig &&
+                parsedFig.layout &&
+                parsedFig.layout.annotations &&
+                Array.isArray(parsedFig.layout.annotations) &&
+                parsedFig.layout.annotations.length > 0
+              ) {
+                // Use the first annotation's text
+                annotationText = parsedFig.layout.annotations[0].text;
+                break;
+              }
+            }
+          }
+          const emptyDiv = document.createElement('div');
+          emptyDiv.id = "plotly-empty-figure";
+          emptyDiv.style.width = "100%";
+          emptyDiv.style.maxWidth = "700px";
+          emptyDiv.style.height = "400px";
+          emptyDiv.style.marginBottom = "2em";
+          emptyDiv.style.display = "flex";
+          emptyDiv.style.alignItems = "center";
+          emptyDiv.style.justifyContent = "center";
+          emptyDiv.style.fontSize = "1.3rem";
+          emptyDiv.style.color = "#1976d2";
+          vizDiv.appendChild(emptyDiv);
+          if (annotationText) {
+            emptyDiv.innerHTML = annotationText;
+          } else {
+            Plotly.newPlot(emptyDiv.id, [], {title: "No Visualization Available"}, {responsive: true});
+          }
+        }
+      } catch (err) {
+        document.getElementById('numericalResult').innerHTML = "Error: " + err.message;
+      }
+    };
+    // --- Chapter-to-Micro-Lesson Compiler logic ---
+    document.getElementById('compilerForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const fileInput = document.getElementById('compilerFile');
+      const textInput = document.getElementById('compilerText').value.trim();
+      const resultDiv = document.getElementById('compilerResult');
+      resultDiv.innerHTML = "Processing...";
+      let chapterText = "";
+
+      // Helper to read file as text or extract text from PDF
+      function readFileAsync(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          if (file.type === "application/pdf") {
+            // PDF: send as base64 to backend for extraction
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          } else {
+            // Plain text
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsText(file);
+          }
+        });
+      }
+
+      try {
+        if (fileInput.files && fileInput.files.length > 0) {
+          const file = fileInput.files[0];
+          if (file.type === "application/pdf") {
+            // PDF: send base64 to backend
+            const base64 = await readFileAsync(file);
+            chapterText = null; // will send base64 instead
+            // Send to backend
+            const res = await fetch(backendUrl + "/compile_micro_lessons", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ pdf_base64: base64 })
+            });
+            if (!res.ok) {
+              const errorText = await res.text();
+              resultDiv.innerHTML = "Failed: " + errorText;
+              return;
+            }
+            const data = await res.json();
+            renderCompilerResult(data, resultDiv);
+            return;
+          } else {
+            // .txt or other: read as text
+            chapterText = await readFileAsync(file);
+          }
+        } else if (textInput) {
+          chapterText = textInput;
+        } else {
+          resultDiv.innerHTML = "Please upload a PDF/text file or paste chapter text.";
+          return;
+        }
+
+        // Send text to backend
+        const res = await fetch(backendUrl + "/compile_micro_lessons", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ chapter_text: chapterText })
+        });
+        if (!res.ok) {
+          const errorText = await res.text();
+          resultDiv.innerHTML = "Failed: " + errorText;
+          return;
+        }
+        const data = await res.json();
+        renderCompilerResult(data, resultDiv);
+      } catch (err) {
+        resultDiv.innerHTML = "Error: " + err.message;
+      }
+    };
+
+    function renderCompilerResult(data, container) {
+      // Expecting: data.micro_lessons: array of {heading, explanation, quizlet, ...}
+      if (!data || !Array.isArray(data.micro_lessons)) {
+        container.innerHTML = "No micro-lessons found.";
+        return;
+      }
+      let html = "";
+      data.micro_lessons.forEach((lesson, idx) => {
+        html += `<div class="card" style="margin-bottom:1.5em; background:#fffde7;">`;
+        html += `<h4>Lesson ${idx + 1}: ${lesson.heading || ""}</h4>`;
+        if (lesson.explanation) html += `<div><b>Explanation:</b> ${lesson.explanation}</div>`;
+        if (lesson.analogy) html += `<div><b>Analogy:</b> ${lesson.analogy}</div>`;
+        if (lesson.example) html += `<div><b>Worked Example:</b> ${lesson.example}</div>`;
+        if (lesson.quizlet) {
+          html += `<div><b>Quizlet:</b><ul>`;
+          lesson.quizlet.forEach(q => {
+            html += `<li>${q}</li>`;
+          });
+          html += `</ul></div>`;
+        }
+        if (lesson.glossary) {
+          html += `<div><b>Glossary:</b><ul>`;
+          Object.entries(lesson.glossary).forEach(([term, def]) => {
+            html += `<li><b>${term}:</b> ${def}</li>`;
+          });
+          html += `</ul></div>`;
+        }
+        if (lesson.emoji) html += `<div style="font-size:2em;">${lesson.emoji}</div>`;
+        html += `</div>`;
+      });
+      container.innerHTML = html;
+    }
+  </script>
+</body>
+</html>
