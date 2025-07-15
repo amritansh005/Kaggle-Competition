@@ -284,6 +284,10 @@
     <div id="mcq-section">
       <div class="feature-title">MCQ Exam Generator</div>
       <div class="card" style="padding: 2rem;">
+      <div id="loadingSpinner" style="display:none; font-weight:bold; color:#1976d2; margin-bottom:1em; font-size:1.15rem;">
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Processing... Please wait.
+      </div>
       <form id="examForm">
         <div class="row">
           <div class="input-field col s12 m4">
@@ -384,9 +388,13 @@
 
     document.getElementById('examForm').onsubmit = async function(e) {
       e.preventDefault();
+      // Show spinner
+      document.getElementById('loadingSpinner').style.display = "";
+
       const selectedSubjects = Array.from(document.querySelectorAll('input[name="subject"]:checked')).map(cb => cb.value);
       if (selectedSubjects.length === 0) {
         M.toast({html: "Select at least one subject.", classes: "red"});
+        document.getElementById('loadingSpinner').style.display = "none";
         return;
       }
       const grade = document.getElementById('grade').value;
@@ -398,39 +406,46 @@
         grade: grade,
         difficulty: difficulty
       }));
-      // Call /generate_exam
-      const res = await fetch(backendUrl + "/generate_exam", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          subjects: subjects,
-          language: "en",
-          user_id: user_id
-        })
-      });
-      if (!res.ok) {
-        const errorText = await res.text();
-        M.toast({html: "Failed to generate exam: " + errorText, classes: "red"});
-        console.error("Generate Exam Error:", errorText);
-        return;
+      try {
+        // Call /generate_exam
+        const res = await fetch(backendUrl + "/generate_exam", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            subjects: subjects,
+            language: "en",
+            user_id: user_id
+          })
+        });
+        if (!res.ok) {
+          const errorText = await res.text();
+          M.toast({html: "Failed to generate exam: " + errorText, classes: "red"});
+          console.error("Generate Exam Error:", errorText);
+          document.getElementById('loadingSpinner').style.display = "none";
+          return;
+        }
+        const data = await res.json();
+        examId = data.exam_id;
+        // Call /generate_mcqs with questions array
+        const mcqRes = await fetch(backendUrl + "/generate_mcqs", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ questions: data.questions })
+        });
+        if (!mcqRes.ok) {
+          const mcqErrorText = await mcqRes.text();
+          M.toast({html: "Failed to generate MCQs: " + mcqErrorText, classes: "red"});
+          console.error("Generate MCQs Error:", mcqErrorText);
+          document.getElementById('loadingSpinner').style.display = "none";
+          return;
+        }
+        const mcqData = await mcqRes.json();
+        mcqs = mcqData.mcqs;
+        showMcqs();
+      } finally {
+        // Always hide spinner
+        document.getElementById('loadingSpinner').style.display = "none";
       }
-      const data = await res.json();
-      examId = data.exam_id;
-      // Call /generate_mcqs with questions array
-      const mcqRes = await fetch(backendUrl + "/generate_mcqs", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ questions: data.questions })
-      });
-      if (!mcqRes.ok) {
-        const mcqErrorText = await mcqRes.text();
-        M.toast({html: "Failed to generate MCQs: " + mcqErrorText, classes: "red"});
-        console.error("Generate MCQs Error:", mcqErrorText);
-        return;
-      }
-      const mcqData = await mcqRes.json();
-      mcqs = mcqData.mcqs;
-      showMcqs();
     };
 
     function showMcqs() {
@@ -801,7 +816,7 @@
             try {
               console.log("Visualization idx", idx, "type:", typeof fig, "content:", fig);
             } catch (e) {}
-            // If fig is a string, try to parse as JSON
+            // If fig is a string, try to parse as JSON; if already an object, use as is
             if (typeof fig === "string") {
               try {
                 fig = JSON.parse(fig);

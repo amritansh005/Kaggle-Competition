@@ -734,6 +734,24 @@ def solve_numerical(req: NumericalQueryRequest):
                 f.write(f"\nERROR logging visualizations: {e}\n")
             f.write("\n" + "="*60 + "\n")
         
+        # --- PATCH: Ensure all visualizations are valid Plotly JSON for frontend ---
+        import plotly
+        cleaned_visualizations = []
+        for viz in serialized_data.get("visualizations", []):
+            # If already a dict (from to_plotly_json), keep as is
+            if isinstance(viz, dict):
+                cleaned_visualizations.append(viz)
+            # If it's a string that looks like JSON, try to parse it
+            elif isinstance(viz, str):
+                try:
+                    # Try to parse as JSON (from fig.to_json())
+                    cleaned = json.loads(viz)
+                    cleaned_visualizations.append(cleaned)
+                except Exception:
+                    # If not valid JSON, skip it (prevents Python Figure(...) strings from breaking frontend)
+                    continue
+        serialized_data["visualizations"] = cleaned_visualizations
+
         # Use JSONResponse with custom encoder to bypass FastAPI's default encoder
         return JSONResponse(content=serialized_data)
         

@@ -162,4 +162,5 @@ class AdvancedVisualizer:
             fig.update_layout(title="Computation Result", xaxis_visible=False, yaxis_visible=False)
             figures.append(fig)
 
-        return figures
+        # Always return JSON-serializable dicts for all figures
+        return [fig.to_plotly_json() for fig in figures]
